@@ -22,7 +22,7 @@ const ProductCardDetail: React.FC<ProductCardDetailProps> = ({ product, onAddToC
         alt={product.name}
         className="w-96 h-96 object-cover rounded-lg mb-4 md:mb-0 md:mr-6"
       />
-      <div className="flex flex-col bg-white p-4 rounded-lg shadow-md justify-between"> {/* Añadido justify-between para estirar el contenido */}
+      <div className="flex flex-col bg-white p-4 rounded-lg shadow-md justify-between w-full"> {/* Añadido justify-between para estirar el contenido */}
         <h1 className="text-3xl font-bold text-blue-600 mb-2">{product.name}</h1>
         <p className="text-gray-700 mb-2">{product.description}</p>
         <p className="text-2xl font-semibold text-blue-600 mb-4">${product.price.toFixed(2)}</p>

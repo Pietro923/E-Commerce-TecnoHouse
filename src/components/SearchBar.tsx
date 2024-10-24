@@ -14,6 +14,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ placeholder = "Buscar productos..
     if (query.trim()) {
       // Redirigir a la página de resultados con el parámetro de búsqueda
       router.push(`/search?q=${encodeURIComponent(query)}`);
+      // Limpiar el campo de búsqueda
+      setQuery(""); // Agregar esta línea para limpiar el campo
     }
   };
 
