@@ -3,17 +3,24 @@ import "../../styles/globals.css";
 import { ShoppingCartIcon, EnvelopeIcon, UserCircleIcon, HomeIcon } from "@heroicons/react/24/solid";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { CartProvider } from "@/context/CartContext";
 import Link from "next/link";
 import SearchBar from '@/components/SearchBar';
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/sonner";
+import CartPage from "@/app/cart/page"; // Importa el CartPage
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const [isCartOpen, setCartOpen] = useState(false); // Estado para manejar si el carrito está abierto o no
+
+  const handleCartToggle = () => {
+    setCartOpen(prev => !prev); // Alterna el estado del carrito
+  };
+
   return (
     <CartProvider>
       <html lang="es">
@@ -51,11 +58,9 @@ export default function Layout({ children }: LayoutProps) {
                     </Button>
                   </li>
                   <li>
-                    <Button asChild variant="link" className="flex items-center hover:underline">
-                      <Link href="/cart" className="flex items-center">
-                        <ShoppingCartIcon className="h-5 w-5" />
-                        <span>Carrito</span>
-                      </Link>
+                    <Button onClick={handleCartToggle} variant="link" className="flex items-center hover:underline">
+                      <ShoppingCartIcon className="h-5 w-5" />
+                      <span>Carrito</span>
                     </Button>
                   </li>
                 </ul>
@@ -63,7 +68,11 @@ export default function Layout({ children }: LayoutProps) {
             </div>
           </header>
 
-          <main className="flex-grow">{children}</main>
+          <main className="flex-grow">
+            {children}
+            {/* Aquí se renderiza el carrito directamente */}
+            <CartPage isOpen={isCartOpen} onClose={() => setCartOpen(false)} />
+          </main>
           <Toaster />
           <Footer />
         </body>
