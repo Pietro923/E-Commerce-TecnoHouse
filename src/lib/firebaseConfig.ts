@@ -20,11 +20,23 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 
 
-// Function to get products
+// Function to get all products
 export const getProducts = async () => {
   const productsCollection = collection(db, 'products');
   const productSnapshot = await getDocs(productsCollection);
   const productList = productSnapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+  return productList;
+};
+
+// Function to search products by name
+export const searchProducts = async (searchQuery: string) => {
+  const productsCollection = collection(db, 'products');
+  const q = query(productsCollection, where('name', '>=', searchQuery), where('name', '<=', searchQuery + '\uf8ff'));
+  const querySnapshot = await getDocs(q);
+  const productList = querySnapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
   }));
