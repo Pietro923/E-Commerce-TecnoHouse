@@ -19,6 +19,7 @@ export default function Home() {
           <h2 className="text-2xl font-semibold mb-4">Todos los productos</h2>
           <ProductList searchQuery={''} />
         </div>
+        
       </main>
     </div>
   );

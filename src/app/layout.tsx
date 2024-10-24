@@ -7,6 +7,7 @@ import { ReactNode } from "react";
 import { CartProvider } from "@/context/CartContext";
 import Link from "next/link";
 import SearchBar from '@/components/SearchBar';
+import { Toaster } from "@/components/ui/sonner"
 
 interface LayoutProps {
   children: ReactNode;
@@ -63,7 +64,7 @@ export default function Layout({ children }: LayoutProps) {
           </header>
 
           <main className="flex-grow">{children}</main>
-
+          <Toaster />
           <Footer />
         </body>
       </html>

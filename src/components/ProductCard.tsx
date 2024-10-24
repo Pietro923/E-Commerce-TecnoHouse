@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
+import { toast } from "sonner"
 
 interface ProductCardProps {
   id: string;
@@ -18,11 +19,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, name, description, price,
 
   const handleAddToCart = () => {
     addToCart({
-        id, name, price, quantity: 1,
-        ImageUrl: ''
+      id, name, price, quantity: 1, ImageUrl: imageUrl
+    });
+
+    // Mostrar el toast con el nombre del producto agregado
+    toast(`${name} agregado al carrito`, {
+      description: `Se ha agregado "${name}" a tu carrito de compras.`,
     });
   };
-
   const handleNavigateToDetail = () => {
     router.push(`/shop/${id}`);
   };
