@@ -1,5 +1,4 @@
-// src/components/ProductList.tsx
-"use client"
+"use client";
 import React, { useEffect, useState } from 'react';
 import { db } from '@/lib/firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
@@ -13,8 +12,13 @@ interface Product {
   ImageUrl: string;
 }
 
-const ProductList = () => {
+interface ProductListProps {
+  searchQuery: string;
+}
+
+const ProductList: React.FC<ProductListProps> = ({ searchQuery }) => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,6 +30,7 @@ const ProductList = () => {
           ...doc.data(),
         })) as Product[];
         setProducts(productsData);
+        setFilteredProducts(productsData);
       } catch (error) {
         console.error('Error al obtener productos:', error);
       } finally {
@@ -36,22 +41,40 @@ const ProductList = () => {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    if (searchQuery) {
+      const lowerQuery = searchQuery.toLowerCase();
+      const filtered = products.filter(
+        (product) =>
+          product.name.toLowerCase().includes(lowerQuery) ||
+          product.description.toLowerCase().includes(lowerQuery)
+      );
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [searchQuery, products]);
+
   if (loading) {
     return <p>Cargando productos...</p>;
   }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {products.map((product) => (
-        <ProductCard 
-          key={product.id}
-          id={product.id}
-          name={product.name}
-          description={product.description}
-          price={product.price}
-          imageUrl={product.ImageUrl}
-        />
-      ))}
+      {filteredProducts.length > 0 ? (
+        filteredProducts.map((product) => (
+          <ProductCard 
+            key={product.id}
+            id={product.id}
+            name={product.name}
+            description={product.description}
+            price={product.price}
+            imageUrl={product.ImageUrl}
+          />
+        ))
+      ) : (
+        <p className="col-span-4 text-center text-gray-500">No se encontraron productos.</p>
+      )}
     </div>
   );
 };

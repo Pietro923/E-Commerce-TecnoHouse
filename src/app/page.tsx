@@ -9,15 +9,15 @@ export default function Home() {
         <div className="container mx-auto">
           <h2 className="text-2xl font-semibold mb-4">Productos Destacados</h2>
           {/* Carga del componente de la lista de productos */}
-          <ProductList />
+          <ProductList searchQuery={''} />
         </div>
         <div className="container mx-auto mt-8">
           <h2 className="text-2xl font-semibold mb-4">SALE SALE SALE</h2>
-          <ProductList />
+          <ProductList searchQuery={''} />
         </div>
         <div className="container mx-auto mt-8">
           <h2 className="text-2xl font-semibold mb-4">Todos los productos</h2>
-          <ProductList />
+          <ProductList searchQuery={''} />
         </div>
       </main>
     </div>
