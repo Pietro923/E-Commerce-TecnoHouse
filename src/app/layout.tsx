@@ -6,12 +6,20 @@ import Footer from "@/components/Footer";
 import { ReactNode } from "react";
 import { CartProvider } from "@/context/CartContext";
 import Link from "next/link";
+import SearchBar from '@/components/SearchBar';
+
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
+  
+  const handleSearch = (query: string) => {
+    // Lógica para manejar la búsqueda, por ejemplo, redirigir a otra página o filtrar productos
+    console.log("Buscar:", query);
+  };
+
   return (
     <CartProvider>
       <html lang="es">
@@ -20,18 +28,7 @@ export default function Layout({ children }: LayoutProps) {
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
               <h1 className="text-3xl font-bold text-blue-600">Tecno House</h1>
               {/* Barra de búsqueda centrada */}
-              <div className="flex flex-1 justify-center">
-                <div className="flex items-center w-full max-w-md">
-                  <input
-                    type="text"
-                    placeholder="Buscar productos..."
-                    className="border border-gray-300 rounded-l-md py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <button className="bg-blue-600 text-white rounded-r-md py-2 px-4 hover:bg-blue-700 transition duration-200">
-                    Buscar
-                  </button>
-                </div>
-              </div>
+              <SearchBar onSearch={handleSearch} />
               {/* Secciones de navegación */}
               <nav>
                 <ul className="flex space-x-4">
