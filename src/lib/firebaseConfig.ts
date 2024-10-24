@@ -6,7 +6,7 @@ import { getFirestore, collection, getDocs, query, where } from 'firebase/firest
 import { Product } from "@/types/types";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDFhDWSUivzriilqsbWKAL0iVCHNMRwVus",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: "tecnohouse-3452c.firebaseapp.com",
   projectId: "tecnohouse-3452c",
   storageBucket: "tecnohouse-3452c.appspot.com",
