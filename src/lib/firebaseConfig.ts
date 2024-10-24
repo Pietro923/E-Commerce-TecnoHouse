@@ -3,7 +3,6 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
-import { Product } from "@/types/types";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -31,16 +30,5 @@ export const getProducts = async () => {
   return productList;
 };
 
-// Function to search products by name
-export const searchProducts = async (searchQuery: string) => {
-  const productsCollection = collection(db, 'products');
-  const q = query(productsCollection, where('name', '>=', searchQuery), where('name', '<=', searchQuery + '\uf8ff'));
-  const querySnapshot = await getDocs(q);
-  const productList = querySnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
-  return productList;
-};
 
 

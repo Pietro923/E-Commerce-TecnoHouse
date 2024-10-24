@@ -1,10 +1,9 @@
-// src/app/shop/[id]/page.tsx
 "use client";
 import React, { useEffect, useState } from 'react';
 import { db } from '@/lib/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
-import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
+import ProductCardDetail from '@/components/ProductCardDetail'; // Importamos el nuevo componente
 
 interface Product {
   id: string;
@@ -21,6 +20,7 @@ interface ProductDetailPageProps {
 const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ params }) => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null); // Agregamos manejo de errores
   const { id } = params; // Obtenemos el ID desde los parámetros
   const { addToCart } = useCart();
 
@@ -38,9 +38,10 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ params }) => {
             ...productSnapshot.data(),
           } as Product);
         } else {
-          console.error('El producto no existe');
+          setError('El producto no existe');
         }
       } catch (error) {
+        setError('Error al obtener los detalles del producto. Inténtalo de nuevo más tarde.');
         console.error('Error al obtener los detalles del producto:', error);
       } finally {
         setLoading(false);
@@ -51,33 +52,32 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ params }) => {
   }, [id]);
 
   if (loading) {
-    return <p>Cargando detalles del producto...</p>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-xl">Cargando detalles del producto...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-red-500 text-xl">{error}</p>
+      </div>
+    );
   }
 
   if (!product) {
-    return <p>Producto no encontrado</p>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-xl">Producto no encontrado</p>
+      </div>
+    );
   }
 
   return (
     <div className="container mx-auto p-6">
-      <div className="flex flex-col md:flex-row items-center">
-        <img
-          src={product.ImageUrl}
-          alt={product.name}
-          className="w-full md:w-1/2 h-auto object-cover rounded mb-4 md:mb-0"
-        />
-        <div className="md:ml-6 flex flex-col">
-          <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-          <p className="text-gray-700 mb-4">{product.description}</p>
-          <p className="text-lg font-semibold mb-4">${product.price.toFixed(2)}</p>
-          <Button
-            className="bg-blue-400 hover:bg-blue-600 rounded-xl"
-            onClick={() => addToCart({ id: product.id, name: product.name, ImageUrl: product.ImageUrl, price: product.price, quantity: 1 })}
-          >
-            Agregar al Carrito
-          </Button>
-        </div>
-      </div>
+      <ProductCardDetail product={product} onAddToCart={addToCart} /> {/* Usamos el nuevo componente aquí */}
     </div>
   );
 };
