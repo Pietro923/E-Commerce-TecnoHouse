@@ -31,7 +31,8 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen">
+    <div className="flex items-center justify-center bg-gray-100 container mx-auto px-4 py-6">
       <form onSubmit={handleLogin} className="bg-white shadow-lg rounded-lg p-8 flex flex-col space-y-4">
         <h2 className="text-2xl font-semibold text-center">Iniciar Sesión</h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
@@ -68,6 +69,7 @@ const LoginPage = () => {
           </button>
         </p>
       </form>
+    </div>
     </div>
   );
 };

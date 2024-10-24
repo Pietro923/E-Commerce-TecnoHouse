@@ -7,11 +7,11 @@ export default function Contacto() {
     <div className="min-h-screen">
       <main className="flex-grow container mx-auto px-4 py-6">
         <section>
-          <h2 className="text-2xl font-semibold mb-4">Contáctanos</h2>
+          
           <form className="bg-white p-4 rounded shadow-md max-w-sm mx-auto">
-            {/* Formulario compacto */}
+          <h2 className="text-2xl font-semibold text-center">Contactanos</h2>
             <div className="mb-2">
-              <label htmlFor="name" className="block text-gray-700 text-sm">
+              <label htmlFor="name" className="block text-gray-700 text-lg font-semibold">
                 Nombre:
               </label>
               <input
@@ -24,7 +24,7 @@ export default function Contacto() {
               />
             </div>
             <div className="mb-2">
-              <label htmlFor="email" className="block text-gray-700 text-sm">
+              <label htmlFor="email" className="block text-gray-700 text-lg font-semibold">
                 Correo Electrónico:
               </label>
               <input
@@ -37,7 +37,7 @@ export default function Contacto() {
               />
             </div>
             <div className="mb-2">
-              <label htmlFor="message" className="block text-gray-700 text-sm">
+              <label htmlFor="message" className="block text-gray-700 text-lg font-semibold">
                 Mensaje:
               </label>
               <textarea
