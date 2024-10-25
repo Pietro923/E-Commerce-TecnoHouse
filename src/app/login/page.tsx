@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
-import { auth } from '@/lib/firebaseConfig';
+import { auth, db } from '@/lib/firebaseConfig'; // Asegúrate de importar Firestore
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { addDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>('');
@@ -11,17 +12,18 @@ const LoginPage = () => {
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-    
-    // Verificar si es un administrador por credenciales fijas
-    if (email === 'admin@admin' && password === 'admin') {
-      localStorage.setItem('isAdmin', 'true'); // Guardar el estado de admin en localStorage
-      window.location.href = '/admin'; // Redirigir a la página de administración
-      return;
-    }
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = '/'; // Redirigir al home después del login
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Verificar el rol en Firestore
+      const role = await getUserRole(user.email || ''); // Asegúrate de que no sea null
+      if (role === 'admin') {
+        window.location.href = '/admin'; // Redirigir a la página de administración
+      } else {
+        window.location.href = '/'; // Redirigir al home después del login
+      }
     } catch (e) {
       setError('Usuario o contraseña incorrectos.');
     }
@@ -30,11 +32,33 @@ const LoginPage = () => {
   const handleRegister = async (event: React.MouseEvent) => {
     event.preventDefault();
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Agregar el usuario a Firestore
+      await addDoc(collection(db, 'users'), {
+        email: user.email,
+        role: 'user', // Asigna el rol por defecto o cambia según sea necesario
+        createdAt: new Date(), // Guarda la fecha actual
+      });
+
       window.location.href = '/'; // Redirigir al home después del registro
     } catch (e) {
       setError('Error al registrar el usuario.');
     }
+  };
+
+  const getUserRole = async (email: string) => {
+    const usersCollection = collection(db, 'users');
+    const q = query(usersCollection, where('email', '==', email));
+    const querySnapshot = await getDocs(q);
+    
+    if (!querySnapshot.empty) {
+      const userDoc = querySnapshot.docs[0];
+      return userDoc.data().role; // Retorna el rol del usuario
+    }
+    
+    return null; // No se encontró el usuario
   };
 
   return (

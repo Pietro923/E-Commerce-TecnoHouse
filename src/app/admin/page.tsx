@@ -7,6 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db } from '@/lib/firebaseConfig'; // Asegúrate de importar Firestore
 import { collection, setDoc, doc } from 'firebase/firestore'; // Cambia addDoc por setDoc
 import { toast } from 'sonner';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 const AdminPage = () => {
   const [id, setId] = useState('');
@@ -64,6 +65,7 @@ const AdminPage = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div className="min-h-screen">
       <div className="flex items-center justify-center bg-gray-100 container mx-auto px-4 py-6">
         <form onSubmit={handleAddProduct} className="bg-white shadow-lg rounded-lg p-8 flex flex-col space-y-4">
@@ -116,6 +118,7 @@ const AdminPage = () => {
         </form>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 
