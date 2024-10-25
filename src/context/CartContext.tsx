@@ -15,6 +15,7 @@ interface CartContextType {
   addToCart: (product: CartItem) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
+  cartCount: number; // Añadir esta propiedad
 }
 
 export const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -44,8 +45,11 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const clearCart = () => setCart([]);
 
+  // Función para obtener el total de productos en el carrito
+  const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, cartCount  }}>
       {children}
     </CartContext.Provider>
   );

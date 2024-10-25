@@ -4,21 +4,22 @@ import { ShoppingCartIcon, EnvelopeIcon, UserCircleIcon, HomeIcon } from "@heroi
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import { ReactNode, useState } from "react";
-import { CartProvider } from "@/context/CartContext";
+import { CartProvider, useCart } from "@/context/CartContext";
 import Link from "next/link";
 import SearchBar from '@/components/SearchBar';
 import { Toaster } from "@/components/ui/sonner";
-import CartPage from "@/app/cart/page"; // Importa el CartPage
+import CartPage from "@/app/cart/page";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const [isCartOpen, setCartOpen] = useState(false); // Estado para manejar si el carrito está abierto o no
+  const [isCartOpen, setCartOpen] = useState(false);
 
+  // Alterna el estado del carrito para abrir/cerrar
   const handleCartToggle = () => {
-    setCartOpen(prev => !prev); // Alterna el estado del carrito
+    setCartOpen((prev) => !prev);
   };
 
   return (
@@ -58,9 +59,16 @@ export default function Layout({ children }: LayoutProps) {
                     </Button>
                   </li>
                   <li>
-                    <Button onClick={handleCartToggle} variant="link" className="flex items-center hover:underline">
+                    {/* Este botón controla la apertura del carrito */}
+                    <Button
+                      onClick={handleCartToggle}
+                      variant="link"
+                      className="flex items-center hover:underline relative"
+                    >
                       <ShoppingCartIcon className="h-5 w-5" />
-                      <span>Carrito</span>
+                      <span className="ml-1">Carrito</span>
+                      {/* Usar el hook useCart DENTRO del CartProvider para obtener el cartCount */}
+                      <CartCountBadge />
                     </Button>
                   </li>
                 </ul>
@@ -70,13 +78,25 @@ export default function Layout({ children }: LayoutProps) {
 
           <main className="flex-grow">
             {children}
-            {/* Aquí se renderiza el carrito directamente */}
-            <CartPage isOpen={isCartOpen} onClose={() => setCartOpen(false)} />
+            {/* Renderizar la página del carrito solo si isCartOpen es true */}
+            {isCartOpen && <CartPage isOpen={isCartOpen} onClose={() => setCartOpen(false)} />}
           </main>
           <Toaster />
           <Footer />
         </body>
       </html>
     </CartProvider>
+  );
+}
+
+// Componente que obtiene el conteo del carrito
+function CartCountBadge() {
+  const { cartCount } = useCart(); // Ahora esto se ejecuta DENTRO del CartProvider
+  return (
+    cartCount > 0 && (
+      <span className="bg-black text-white rounded-full text-xs absolute top-4 right-0 transform translate-x-1/2 -translate-y-1/2 px-1">
+        {cartCount}
+      </span>
+    )
   );
 }
