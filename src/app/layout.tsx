@@ -6,9 +6,9 @@ import Footer from "@/components/Footer";
 import { ReactNode, useState } from "react";
 import { CartProvider, useCart } from "@/context/CartContext";
 import Link from "next/link";
-import SearchBar from '@/components/SearchBar';
 import { Toaster } from "@/components/ui/sonner";
 import CartPage from "@/app/cart/page";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface LayoutProps {
   children: ReactNode;
@@ -17,86 +17,107 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [isCartOpen, setCartOpen] = useState(false);
 
-  // Alterna el estado del carrito para abrir/cerrar
   const handleCartToggle = () => {
     setCartOpen((prev) => !prev);
   };
 
   return (
+    
     <CartProvider>
-      <html lang="es">
-        <body className="bg-gray-100 flex flex-col min-h-screen">
-          <header className="bg-white shadow">
-            <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-              <h1 className="text-3xl font-bold text-blue-600">Tecno House</h1>
-              {/* Barra de búsqueda centrada */}
-              <SearchBar />
-              {/* Secciones de navegación */}
-              <nav>
-                <ul className="flex space-x-4">
-                  <li>
-                    <Button asChild variant="link" className="flex items-center hover:underline">
-                      <Link href="/" className="flex items-center">
-                        <HomeIcon className="h-5 w-5 mr-1" />
-                        Inicio
-                      </Link>
-                    </Button>
-                  </li>
-                  <li>
-                    <Button asChild variant="link" className="flex items-center hover:underline">
-                      <Link href="/contacto" className="flex items-center">
-                        <EnvelopeIcon className="h-5 w-5 mr-1" />
-                        Contacto
-                      </Link>
-                    </Button>
-                  </li>
-                  <li>
-                    <Button asChild variant="link" className="flex items-center hover:underline">
-                      <Link href="/login" className="flex items-center">
-                        <UserCircleIcon className="h-5 w-5 mr-1" />
-                        Ingresar
-                      </Link>
-                    </Button>
-                  </li>
-                  <li>
-                    {/* Este botón controla la apertura del carrito */}
-                    <Button
-                      onClick={handleCartToggle}
-                      variant="link"
-                      className="flex items-center hover:underline relative"
+      <html>
+      <body>
+      <div className="bg-gray-50 flex flex-col min-h-screen">
+        <header className="bg-white shadow-md sticky top-0 z-50">
+          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+            <motion.h1 
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-4xl font-bold text-blue-600 tracking-tight"
+            >
+              Tecno House
+            </motion.h1>
+             
+            <nav>
+              <ul className="flex space-x-4">
+                {[
+                  { href: "/", icon: HomeIcon, label: "Inicio" },
+                  { href: "/contacto", icon: EnvelopeIcon, label: "Contacto" },
+                  { href: "/login", icon: UserCircleIcon, label: "Ingresar" }
+                ].map((item) => (
+                  <li key={item.href}>
+                    <Button 
+                      asChild 
+                      variant="ghost" 
+                      className="hover:bg-blue-50 transition-colors"
                     >
-                      <ShoppingCartIcon className="h-5 w-5" />
-                      <span className="ml-1">Carrito</span>
-                      {/* Usar el hook useCart DENTRO del CartProvider para obtener el cartCount */}
-                      <CartCountBadge />
+                      <Link href={item.href} className="flex items-center">
+                        <item.icon className="h-5 w-5 mr-2 text-blue-500" />
+                        {item.label}
+                      </Link>
                     </Button>
                   </li>
-                </ul>
-              </nav>
-            </div>
-          </header>
+                ))}
+                
+                <li>
+                  <Button
+                    onClick={handleCartToggle}
+                    variant="ghost"
+                    className="hover:bg-blue-50 relative transition-colors"
+                  >
+                    <ShoppingCartIcon className="h-5 w-5 text-blue-500" />
+                    <span className="ml-2">Carrito</span>
+                    <CartCountBadge />
+                  </Button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </header>
 
-          <main className="flex-grow">
+        <AnimatePresence>
+          <motion.main 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex-grow"
+          >
             {children}
-            {/* Renderizar la página del carrito solo si isCartOpen es true */}
-            {isCartOpen && <CartPage isOpen={isCartOpen} onClose={() => setCartOpen(false)} />}
-          </main>
-          <Toaster />
-          <Footer />
+            
+            <AnimatePresence>
+              {isCartOpen && (
+                <CartPage 
+                  isOpen={isCartOpen} 
+                  onClose={() => setCartOpen(false)} 
+                />
+              )}
+            </AnimatePresence>
+          </motion.main>
+        </AnimatePresence>
+
+        <Toaster />
+        <Footer />
+      </div>
         </body>
       </html>
     </CartProvider>
   );
 }
 
-// Componente que obtiene el conteo del carrito
 function CartCountBadge() {
-  const { cartCount } = useCart(); // Ahora esto se ejecuta DENTRO del CartProvider
+  const { cartCount } = useCart();
+  
+  if (cartCount === 0) return null;
+
   return (
-    cartCount > 0 && (
-      <span className="bg-black text-white rounded-full text-xs absolute top-4 right-0 transform translate-x-1/2 -translate-y-1/2 px-1">
-        {cartCount}
-      </span>
-    )
+    <motion.span 
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center"
+    >
+      {cartCount}
+    </motion.span>
   );
 }
+
+export { Layout };

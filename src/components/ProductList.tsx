@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { db } from '@/lib/firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
 import ProductCard from '@/components/ProductCard';
+import { Loader2 } from 'lucide-react';
 
 interface Product {
   id: string;
@@ -37,7 +38,6 @@ const ProductList: React.FC<ProductListProps> = ({ searchQuery }) => {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
 
@@ -56,25 +56,45 @@ const ProductList: React.FC<ProductListProps> = ({ searchQuery }) => {
   }, [searchQuery, products]);
 
   if (loading) {
-    return <p>Cargando productos...</p>;
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="flex flex-col items-center space-y-4">
+          <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
+          <p className="text-gray-600">Cargando productos...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {filteredProducts.length > 0 ? (
-        filteredProducts.map((product) => (
-          <ProductCard 
-            key={product.id}
-            id={product.id}
-            name={product.name}
-            description={product.description}
-            price={product.price}
-            imageUrl={product.ImageUrl}
-          />
-        ))
-      ) : (
-        <p className="col-span-4 text-center text-gray-500">No se encontraron productos.</p>
-      )}
+    <div className="container mx-auto px-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-fade-in">
+        {filteredProducts.length > 0 ? (
+          filteredProducts.map((product) => (
+            <div 
+              key={product.id} 
+              className="transition-all duration-300 hover:scale-[1.02]"
+            >
+              <ProductCard 
+                id={product.id}
+                name={product.name}
+                description={product.description}
+                price={product.price}
+                imageUrl={product.ImageUrl}
+              />
+            </div>
+          ))
+        ) : (
+          <div className="col-span-4 text-center py-12 bg-gray-50 rounded-lg">
+            <p className="text-2xl text-gray-500 font-semibold">
+              No se encontraron productos
+            </p>
+            <p className="text-gray-400 mt-2">
+              Intenta modificar tu búsqueda
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
